@@ -22,7 +22,7 @@
 #include "GPIO_iMXRT1050.h"
 #include "Driver_USART.h"
 
-// B-U585I-IOT02A Arduino Connector Pin Defintions
+// IMXRT1050-EVKB Arduino Connector Pin Defintions
 #define ARDUINO_UNO_D0  GPIO_PORT1(23U) /* GPIO_AD_B1_07 - USART3: RX */
 #define ARDUINO_UNO_D1  GPIO_PORT1(22U) /* GPIO_AD_B1_06 - USART3: TX */
 #define ARDUINO_UNO_D2  GPIO_PORT1(11U) /* GPIO_AD_B0_11 */
@@ -48,7 +48,7 @@
 #define ARDUINO_UNO_D20 GPIO_PORT1(17U) /* GPIO_AD_B1_01 - I2C: SDA */
 #define ARDUINO_UNO_D21 GPIO_PORT1(16U) /* GPIO_AD_B1_00 - I2C: SCL */
 
-// B-U585I-IOT02A Arduino CMSIS Driver instances
+// IMXRT1050-EVKB Arduino CMSIS Driver instances
 #define ARDUINO_UNO_UART    3
 
 // CMSIS Drivers
