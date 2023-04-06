@@ -5,7 +5,7 @@ layer:
   # name: AVH_MPS3_Cortsone-300
   # variant: IoT-VSocket-Ethernet
   description: Board setup for IoT with VSocket and Ethernet interface
-  for-device: ARM::SSE-300-MPS3
+  for-board: ARM::V2M-MPS3-SSE-300-FVP
   processor:
     endian: little
     trustzone: secure
