@@ -133,6 +133,11 @@ layer:
         - file: ./main.c
         - file: ./retarget_stdio.c
         - file: ./RTE/Device/MIMXRT1052DVL6B/MIMXRT1052xxxxx_flexspi_nor_sdram.scf
+    - group: Driver
+      files:
+        - file: ../../../../interface/audio/include/audio_drv.h
+        - file: ./Driver_Audio/Audio_IMXRT1050-EVKB.h
+        - file: ./Driver_Audio/Audio_IMXRT1050-EVKB.c
     - group: MCUXpresso
       files:
         - file: ./IMXRT1050-EVKB.mex
