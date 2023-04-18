@@ -87,3 +87,8 @@ layer:
           for-compiler: AC6
         - file: ./RTE/Device/SSE-310-MPS3/corstone310_mps3_s.ld
           for-compiler: GCC
+    - group: Driver
+      files:
+        - file: ../../../../interface/VSI/include/arm_vsi.h
+        - file: ../../../../interface/audio/include/audio_drv.h
+        - file: ../../../../interface/VSI/audio/driver/audio_drv.c

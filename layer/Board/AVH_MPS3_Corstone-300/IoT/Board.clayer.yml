@@ -65,3 +65,8 @@ layer:
         - file: ./retarget_stdio.c
         - file: ./Driver/vio_V2M-MPS3-SSE-300.c
         - file: ./RTE/Device/SSE-300-MPS3/fvp_sse300_mps3_s.sct
+    - group: Driver
+      files:
+        - file: ../../../../interface/VSI/include/arm_vsi.h
+        - file: ../../../../interface/audio/include/audio_drv.h
+        - file: ../../../../interface/VSI/audio/driver/audio_drv.c
