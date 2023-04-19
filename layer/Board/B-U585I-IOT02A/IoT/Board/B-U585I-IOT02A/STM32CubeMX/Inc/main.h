@@ -207,6 +207,7 @@ extern void    app_main (void *argument);
 #define MXCHIP_RESET_GPIO_Port GPIOF
 #define ARDUINO_D10_SPI1_NSS_Pin GPIO_PIN_12
 #define ARDUINO_D10_SPI1_NSS_GPIO_Port GPIOE
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

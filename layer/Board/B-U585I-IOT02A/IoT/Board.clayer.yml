@@ -70,6 +70,7 @@ layer:
     - component: Keil::Device:STM32Cube HAL:RCC
     - component: Keil::Device:STM32Cube HAL:RNG
     - component: Keil::Device:STM32Cube HAL:RTC
+    - component: Keil::Device:STM32Cube HAL:SAI
     - component: Keil::Device:STM32Cube HAL:SPI
     - component: Keil::Device:STM32Cube HAL:Smartcard
     - component: Keil::Device:STM32Cube HAL:UART
@@ -85,6 +86,7 @@ layer:
     - component: Keil::Board Support&B-U585I-IOT02A:Components:EMW3080
     - component: Keil::Board Support&B-U585I-IOT02A:Components:IIS2MDC
     - component: Keil::Board Support&B-U585I-IOT02A:Components:ISM330DHCX
+    - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Audio
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:BUS
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Basic I/O
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Motion Sensors
@@ -131,3 +133,8 @@ layer:
             - RTE_Compiler_IO_STDERR_User
           for-compiler: GCC
         - file: ./retarget_stdio.c
+    - group: Driver
+      files:
+        - file: ../../../../interface/audio/include/audio_drv.h
+        - file: ./Driver_Audio/Audio_B-U585I-IOT02A.h
+        - file: ./Driver_Audio/Audio_B-U585I-IOT02A.c
