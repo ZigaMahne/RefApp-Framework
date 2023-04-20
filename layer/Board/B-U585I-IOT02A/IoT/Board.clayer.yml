@@ -136,5 +136,5 @@ layer:
     - group: Driver
       files:
         - file: ../../../../interface/audio/include/audio_drv.h
-        - file: ./Driver_Audio/Audio_B-U585I-IOT02A.h
-        - file: ./Driver_Audio/Audio_B-U585I-IOT02A.c
+        - file: ./Driver/Audio_B-U585I-IOT02A.h
+        - file: ./Driver/Audio_B-U585I-IOT02A.c

@@ -136,8 +136,8 @@ layer:
     - group: Driver
       files:
         - file: ../../../../interface/audio/include/audio_drv.h
-        - file: ./Driver_Audio/Audio_IMXRT1050-EVKB.h
-        - file: ./Driver_Audio/Audio_IMXRT1050-EVKB.c
+        - file: ./Driver/Audio_IMXRT1050-EVKB.h
+        - file: ./Driver/Audio_IMXRT1050-EVKB.c
     - group: MCUXpresso
       files:
         - file: ./IMXRT1050-EVKB.mex
