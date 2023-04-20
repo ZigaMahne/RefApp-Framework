@@ -47,7 +47,6 @@ layer:
 
   define:
     - CMSIS_board_header="B_U585I_IOT02A_DK.h"
-    - MX_WIFI_SPI_DMA=0   # Do not use DMA if TZEN=1
 
   components:
     - component: Keil::Device:Startup&Source C

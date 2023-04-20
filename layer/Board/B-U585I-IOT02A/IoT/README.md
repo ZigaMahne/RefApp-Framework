@@ -16,6 +16,8 @@ Refer to ["Migrate STM32 Based Example Projects to Custom Hardware"](https://git
 
 ### System Configuration
 
+**TrustZone** disabled (option bit TZEN=0)
+
 | System resource         | Setting
 |:------------------------|:--------------------------------------------
 | Heap                    | 64 kB (configured in the linker script file)
