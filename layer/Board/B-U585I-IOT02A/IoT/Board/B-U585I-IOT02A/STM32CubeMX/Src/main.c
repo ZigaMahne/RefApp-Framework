@@ -97,7 +97,7 @@ static void MX_UART4_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
 static void MX_UCPD1_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void SystemPower_Config(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -176,6 +176,8 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  /* Configure the System Power */
+  SystemPower_Config();
   SystemCoreClockUpdate();
   /* USER CODE END SysInit */
 
@@ -1116,7 +1118,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+/**
+  * @brief Power Configuration
+  * @retval None
+  */
+static void SystemPower_Config(void)
+{
+  HAL_PWREx_EnableVddIO2();
+}
 /* USER CODE END 4 */
 
 /**
