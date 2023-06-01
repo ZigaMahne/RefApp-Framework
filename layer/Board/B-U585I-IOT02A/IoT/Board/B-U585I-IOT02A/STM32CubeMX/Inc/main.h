@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -69,9 +69,6 @@ extern void    app_main (void *argument);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MXCHIP_FLOW_Pin GPIO_PIN_15
-#define MXCHIP_FLOW_GPIO_Port GPIOG
-#define MXCHIP_FLOW_EXTI_IRQn EXTI15_IRQn
 #define WRLS_UART4_RX_Pin GPIO_PIN_11
 #define WRLS_UART4_RX_GPIO_Port GPIOC
 #define USB_UCPD_CC1_Pin GPIO_PIN_15
@@ -142,12 +139,10 @@ extern void    app_main (void *argument);
 #define OCTOSPI_F_IO3_GPIO_Port GPIOF
 #define OCTOSPI_F_CLK_P_Pin GPIO_PIN_4
 #define OCTOSPI_F_CLK_P_GPIO_Port GPIOF
-#define ARDUINO_D9_DATAREADY_Pin GPIO_PIN_8
-#define ARDUINO_D9_DATAREADY_GPIO_Port GPIOA
 #define T_VCP_TX_Pin GPIO_PIN_9
 #define T_VCP_TX_GPIO_Port GPIOA
-#define USB_C_PA11_Pin GPIO_PIN_11
-#define USB_C_PA11_GPIO_Port GPIOA
+#define USB_C_N_Pin GPIO_PIN_11
+#define USB_C_N_GPIO_Port GPIOA
 #define MIC_CCK1_Pin GPIO_PIN_10
 #define MIC_CCK1_GPIO_Port GPIOF
 #define OCTOSPI_R_IO3_Pin GPIO_PIN_6
@@ -162,15 +157,10 @@ extern void    app_main (void *argument);
 #define MIC_CCK0_GPIO_Port GPIOE
 #define Mems_VLX_GPIO_Pin GPIO_PIN_5
 #define Mems_VLX_GPIO_GPIO_Port GPIOG
-#define MXCHIP_NOTIFY_Pin GPIO_PIN_14
-#define MXCHIP_NOTIFY_GPIO_Port GPIOD
-#define MXCHIP_NOTIFY_EXTI_IRQn EXTI14_IRQn
 #define OCTOSPI_R_IO6_Pin GPIO_PIN_3
 #define OCTOSPI_R_IO6_GPIO_Port GPIOC
 #define OCTOSPI_F_DQS_Pin GPIO_PIN_12
 #define OCTOSPI_F_DQS_GPIO_Port GPIOF
-#define USB_UCPD_FLT_Pin GPIO_PIN_8
-#define USB_UCPD_FLT_GPIO_Port GPIOE
 #define ARDUINO_D12_SPI1_MISO_Pin GPIO_PIN_14
 #define ARDUINO_D12_SPI1_MISO_GPIO_Port GPIOE
 #define OCTOSPI_R_CLK_P_Pin GPIO_PIN_10
@@ -187,8 +177,6 @@ extern void    app_main (void *argument);
 #define ARDUINO_D13_SPI1_SCK_GPIO_Port GPIOE
 #define OCTOSPI_R_NCS_Pin GPIO_PIN_11
 #define OCTOSPI_R_NCS_GPIO_Port GPIOB
-#define MXCHIP_NSS_Pin GPIO_PIN_12
-#define MXCHIP_NSS_GPIO_Port GPIOB
 #define USB_UCPD_CC2_Pin GPIO_PIN_15
 #define USB_UCPD_CC2_GPIO_Port GPIOB
 #define ARDUINO_D1_TX_Pin GPIO_PIN_8
@@ -203,10 +191,6 @@ extern void    app_main (void *argument);
 #define ARDUINO_D11_SPI1_MOSI_GPIO_Port GPIOE
 #define MIC_SDIN0_Pin GPIO_PIN_1
 #define MIC_SDIN0_GPIO_Port GPIOB
-#define MXCHIP_RESET_Pin GPIO_PIN_15
-#define MXCHIP_RESET_GPIO_Port GPIOF
-#define ARDUINO_D10_SPI1_NSS_Pin GPIO_PIN_12
-#define ARDUINO_D10_SPI1_NSS_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 

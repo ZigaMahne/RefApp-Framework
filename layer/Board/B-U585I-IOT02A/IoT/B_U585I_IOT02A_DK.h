@@ -25,7 +25,7 @@
 #include "Driver_SPI.h"
 #include "Driver_USART.h"
 
-// B-U585I-IOT02A Arduino Connector Pin Defintions
+// B-U585I-IOT02A Arduino Connector Pin Definitions
 #define ARDUINO_UNO_D0  GPIO_PORTD(9U)  /* USART3: RX */
 #define ARDUINO_UNO_D1  GPIO_PORTD(8U)  /* USART3: TX */
 #define ARDUINO_UNO_D2  GPIO_PORTD(15U)
