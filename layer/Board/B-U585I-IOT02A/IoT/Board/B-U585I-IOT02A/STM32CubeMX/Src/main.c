@@ -36,7 +36,6 @@
 
 #include "GPIO_STM32U5xx.h"
 #include "WiFi_EMW3080.h"
-#include "audio_drv.h"
 
 #include "b_u585i_iot02a_env_sensors.h"
 #include "b_u585i_iot02a_motion_sensors.h"
@@ -189,12 +188,6 @@ void USBH_VbusOnOff (bool vbus) {
 }
 #endif
 
-
-/**
-  * AudioDrv_Callback
-  */
-extern void AudioDrv_Callback (uint32_t event);
-
 /**
   * BSP Sensor Init
   */
@@ -234,9 +227,6 @@ static void BSP_SENSOR_Init (void) {
   ISM330DHCX_FIFO_GYRO_Set_BDR(&ISM330DHCX_Obj, 1666.0f);
 
   ISM330DHCX_FIFO_Set_Mode(&ISM330DHCX_Obj, ISM330DHCX_STREAM_MODE);
-
-  AudioDrv_Initialize(AudioDrv_Callback);
-  AudioDrv_Configure(AUDIO_DRV_INTERFACE_RX,1, 16, 16000);
 }
 
 #ifdef CMSIS_shield_header
@@ -286,7 +276,6 @@ int main(void)
   MX_GPDMA1_Init();
   MX_ICACHE_Init();
   MX_ADC4_Init();
-  MX_ADF1_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_OCTOSPI1_Init();
@@ -318,7 +307,6 @@ int main(void)
   Driver_GPIO0.SetOutput      (GPIO_PORTB(12U), 1U);
   Driver_GPIO0.SetDirection   (GPIO_PORTB(12U), ARM_GPIO_OUTPUT);
   Driver_GPIO0.SetOutputMode  (GPIO_PORTB(12U), ARM_GPIO_PUSH_PULL);
-
 
   /* PF15 Pin (WRLS_WKUP_W) */
   Driver_GPIO0.Setup          (GPIO_PORTF(15U), NULL);
@@ -1357,6 +1345,17 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(MIC_SDIN0_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI8_IRQn, 8, 0);
+  HAL_NVIC_EnableIRQ(EXTI8_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI14_IRQn, 8, 0);
+  HAL_NVIC_EnableIRQ(EXTI14_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI15_IRQn, 8, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_IRQn);
+
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
