@@ -16,7 +16,24 @@
  * limitations under the License.
  *---------------------------------------------------------------------------*/
 
-#include "Audio_B-U585I-IOT02A.h"
+#include <string.h>
+#include <stdlib.h>
+#include "audio_drv.h"
+#include "b_u585i_iot02a_audio.h"
+
+/* Definitions */
+typedef struct audio_cb_s {
+  AudioDrv_Event_t callback;
+  uint8_t *app_buf;
+  uint8_t *dma_buf;
+  uint32_t block_num;
+  uint32_t block_size;
+  uint32_t block_idx;
+  uint32_t count;
+  uint8_t  initialized;
+  uint8_t  locked;
+  uint16_t reserved;
+} AUDIO_CB;
 
 static AUDIO_CB Cb = {0};
 
