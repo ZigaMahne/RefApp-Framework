@@ -95,12 +95,15 @@ layer:
     - component: Keil::Device:STM32Cube LL:UTILS
 
     - component: Keil::Board Support&B-U585I-IOT02A:Components:EMW3080
+    - component: Keil::Board Support&B-U585I-IOT02A:Components:HTS221
     - component: Keil::Board Support&B-U585I-IOT02A:Components:IIS2MDC
     - component: Keil::Board Support&B-U585I-IOT02A:Components:ISM330DHCX
+    - component: Keil::Board Support&B-U585I-IOT02A:Components:LPS22HH
     - component: Keil::Board Support&B-U585I-IOT02A:Components:TCPP0203
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Audio
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Basic I/O
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:BUS
+    - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Environmental Sensors
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:Motion Sensors
     - component: Keil::Board Support&B-U585I-IOT02A:Drivers:USB PD
 
@@ -150,5 +153,9 @@ layer:
     - group: Driver
       files:
         - file: ../../../../interface/audio/include/audio_drv.h
-        - file: ./Driver/Audio_B-U585I-IOT02A.h
+        - file: ../../../../interface/sensor/include/sensor_drv.h
+        - file: ../../../../interface/sensor/source/sensor_drv.c
+        - file: ./Driver/sensor_config.h
+        - file: ./Driver/sensor_drv_hw.c
         - file: ./Driver/Audio_B-U585I-IOT02A.c
+        - file: ./Driver/ism330dhcx_fifo.c
