@@ -135,7 +135,7 @@ static void GPIO_ClockEnable (GPIO_TypeDef *gpio) {
 
 
 // EXTI Line Parameters
-static uint32_t EXTI_input[16] = {
+static uint32_t const EXTI_input[16] = {
   LL_EXTI_EXTI_LINE0,  LL_EXTI_EXTI_LINE1,  LL_EXTI_EXTI_LINE2,  LL_EXTI_EXTI_LINE3,
   LL_EXTI_EXTI_LINE4,  LL_EXTI_EXTI_LINE5,  LL_EXTI_EXTI_LINE6,  LL_EXTI_EXTI_LINE7,
   LL_EXTI_EXTI_LINE8,  LL_EXTI_EXTI_LINE9,  LL_EXTI_EXTI_LINE10, LL_EXTI_EXTI_LINE11,
@@ -283,9 +283,12 @@ static int32_t GPIO_Setup (ARM_GPIO_Pin_t pin, ARM_GPIO_SignalEvent_t cb_event) 
         init.Pin       = pin_mask;
         init.Mode      = GPIO_MODE_INPUT;
         init.Pull      = GPIO_NOPULL;
-        init.Speed     = GPIO_SPEED_FREQ_LOW;
+        init.Speed     = GPIO_SPEED_FREQ_HIGH;
         init.Alternate = 0U;
         GPIO_ClockEnable(gpio);
+        if ((SignalPort[pin_num] == 0xFFU) || (SignalPort[pin_num] == pin_port)) {
+          LL_EXTI_DisableIT_0_31(pin_mask);
+        }
         HAL_GPIO_WritePin(gpio, (uint16_t)pin_mask, GPIO_PIN_RESET);
         HAL_GPIO_Init(gpio, &init);
         if (cb_event != NULL) {
@@ -425,8 +428,6 @@ static int32_t GPIO_SetEventTrigger (ARM_GPIO_Pin_t pin, ARM_GPIO_EVENT_TRIGGER 
       switch (trigger) {
         case ARM_GPIO_TRIGGER_NONE:
           if (SignalPort[pin_num] == (uint8_t)pin_port) {
-            LL_EXTI_DisableFallingTrig_0_31(pin_mask);
-            LL_EXTI_EnableRisingTrig_0_31(pin_mask);
             LL_EXTI_DisableIT_0_31(pin_mask);
           }
           break;
