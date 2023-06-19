@@ -136,6 +136,10 @@ layer:
     - group: Driver
       files:
         - file: ../../../../interface/audio/include/audio_drv.h
+        - file: ../../../../interface/sensor/include/sensor_drv.h
+        - file: ../../../../interface/sensor/source/sensor_drv.c
+        - file: ./Driver/sensor_config.h
+        - file: ./Driver/sensor_drv_hw.c
         - file: ./Driver/Audio_IMXRT1050-EVKB.h
         - file: ./Driver/Audio_IMXRT1050-EVKB.c
     - group: MCUXpresso
