@@ -24,14 +24,14 @@
 #include "ism330dhcx_fifo.h"
 
 #ifndef BUF_SIZE_ACCELEROMETER
-#define BUF_SIZE_ACCELEROMETER 1024U    // must be 2^n
+#define BUF_SIZE_ACCELEROMETER 2048U    // must be 2^n
 #endif
 #ifndef BUF_SIZE_GYROSCOPE
-#define BUF_SIZE_GYROSCOPE     1024U    // must be 2^n
+#define BUF_SIZE_GYROSCOPE     2048U    // must be 2^n
 #endif
 
 #ifndef BUF_SIZE_FIFO
-#define BUF_SIZE_FIFO          2048U
+#define BUF_SIZE_FIFO          4096U
 #endif
 
 #define SAMPLE_SIZE            6U
@@ -186,7 +186,7 @@ uint32_t ISM330DHCX_FIFO_Read (uint32_t id, uint32_t num_samples, uint8_t *buf) 
         if (ctx->read_reg(ctx->handle, ISM330DHCX_FIFO_DATA_OUT_TAG, buf_fifo, cnt) == 0) {
           for (idx = 0U; idx < cnt; idx += 7) {
             tag = buf_fifo[idx] >> 3;
-            if (tag == ISM330DHCX_TAG(id)) {
+            if ((tag == ISM330DHCX_TAG(id)) && (num < num_samples)) {
               memcpy(buf + (num * SAMPLE_SIZE), &buf_fifo[idx+1], SAMPLE_SIZE);
               num++;
             } else {
@@ -205,7 +205,7 @@ uint32_t ISM330DHCX_FIFO_Read (uint32_t id, uint32_t num_samples, uint8_t *buf) 
                   if (ism330dhcx_cb[ISM330DHCX_ID_ACCELEROMETER].buf_cb != NULL) {
                     if (Buffer_Write(&ism330dhcx_cb[ISM330DHCX_ID_ACCELEROMETER], &buf_fifo[idx+1], SAMPLE_SIZE) != SAMPLE_SIZE) {
                       //  Sample lost
-//                      printf("ERROR: Accelerometer buffer overflow\r\n");
+//                     printf("ERROR: Accelerometer buffer overflow\r\n");
                     }
                   }
                   break;
