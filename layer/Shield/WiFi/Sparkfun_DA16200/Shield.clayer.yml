@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/Open-CMSIS-Pack/devtools/schemas/projmgr/1.5.0/tools/projmgr/schemas/clayer.schema.json
-
 layer:
   type: Shield
   description: Sparkfun DA16200 WiFi Shield
@@ -18,7 +16,7 @@ layer:
     - pack: ARM::CMSIS-Driver@2.7.2
 
   define:
-    - CMSIS_shield_header="Sparkfun_DA16200.h"
+    - CMSIS_shield_header: "\"Sparkfun_DA16200.h\""
 
   components:
     - component: Keil::CMSIS Driver:WiFi:DA16200&UART

@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/Open-CMSIS-Pack/devtools/schemas/projmgr/1.5.0/tools/projmgr/schemas/clayer.schema.json
-
 layer:
   type: Board
   # name: AVH_MPS3_Cortsone-310
@@ -29,7 +27,7 @@ layer:
     - pack: Keil::ARM_Compiler@1.7.2
 
   define:
-    - CMSIS_board_header="AVH_MPS3_Corstone_310.h"
+    - CMSIS_board_header: "\"AVH_MPS3_Corstone_310.h\""
 
   misc:
     - for-compiler: AC6
