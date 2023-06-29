@@ -34,10 +34,10 @@ layer:
         - Heap: 65536
 
   packs:
-    - pack: NXP::MIMXRT1052_DFP@15.0.0
-    - pack: NXP::EVKB-IMXRT1050_BSP@15.0.0
-    - pack: Keil::IMXRT1050-EVKB_BSP@1.1.0
-    - pack: Keil::iMXRT105x_MWP@1.5.0
+    - pack: NXP::MIMXRT1052_DFP@15.1.0
+    - pack: NXP::EVKB-IMXRT1050_BSP@15.1.0
+    - pack: Keil::IMXRT1050-EVKB_BSP@1.1.1
+    - pack: Keil::iMXRT105x_MWP@1.5.1
     - pack: ARM::CMSIS@5.9.0
     - pack: ARM::CMSIS-Driver@2.7.2
     - pack: Keil::ARM_Compiler@1.7.2
@@ -50,6 +50,7 @@ layer:
     - XIP_BOOT_HEADER_DCD_ENABLE: 1
     - XIP_BOOT_HEADER_ENABLE: 1
     - XIP_EXTERNAL_FLASH: 1
+    - SDK_I2C_BASED_COMPONENT_USED: 1
 
   misc:
     - Link:
@@ -110,8 +111,6 @@ layer:
     - component: ARM::CMSIS Driver:USART:Custom
     - component: NXP::CMSIS Driver:USART:lpuart_cmsis
     - component: Keil::CMSIS Driver:VIO:Board&IMXRT1050-EVKB
-      define:
-        - VIO_SENSOR_DISABLE
 
     - component: Keil::Compiler&ARM Compiler:Event Recorder&DAP
     - component: Keil::Compiler&ARM Compiler:I/O:STDERR&User
