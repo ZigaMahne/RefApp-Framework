@@ -157,20 +157,24 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
 }
 
 static void WiFi_EMW3080_Pin_FLOW_Event (ARM_GPIO_Pin_t pin, uint32_t event) {
+  (void) pin;
+  (void) event;
+
   WiFi_EMW3080_Pin_FLOW_Rising_Edge();
 }
 static void WiFi_EMW3080_Pin_NOTIFY_Event (ARM_GPIO_Pin_t pin, uint32_t event) {
+  (void) pin;
+  (void) event;
+
   WiFi_EMW3080_Pin_NOTIFY_Rising_Edge();
 }
 
-static void BSP_USBPD_PWR_Event (ARM_GPIO_Pin_t pin, uint32_t event) {
 #ifdef RTE_Drivers_USBH0
+static void BSP_USBPD_PWR_Event (ARM_GPIO_Pin_t pin, uint32_t event) {
     /* Call BSP USBPD PWR callback */
     BSP_USBPD_PWR_EventCallback(USBPD_PWR_TYPE_C_PORT_1);
-#endif
 }
 
-#ifdef RTE_Drivers_USBH0
 /**
   \fn          void USBH_VbusOnOff (bool vbus)
   \brief       Drive VBUS on/off.
