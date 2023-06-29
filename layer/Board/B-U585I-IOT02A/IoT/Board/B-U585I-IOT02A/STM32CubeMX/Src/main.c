@@ -235,6 +235,10 @@ __WEAK int32_t shield_setup (void) {
 }
 #endif
 
+__WEAK void app_main (void *argument) {
+  (void) argument;
+}
+
 __WEAK int32_t app_initialize (void) {
   osThreadNew(app_main, NULL, NULL);
   return 0;
