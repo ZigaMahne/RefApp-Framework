@@ -29,8 +29,6 @@
 
 #include "main.h"
 
-extern int stdio_init (void);
-
 #ifdef CMSIS_shield_header
 __WEAK int32_t shield_setup (void) {
   return 0;
@@ -47,8 +45,6 @@ __WEAK int32_t app_initialize (void) {
 }
 
 int main (void) {
-
-  stdio_init();                         // Initialize stdio
 
   vioInit();                            // Initialize Virtual I/O
 
