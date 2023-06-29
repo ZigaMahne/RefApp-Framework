@@ -47,4 +47,4 @@ It features:
   - hardware interface specified in [sensor_drv_hw.h](include/sensor_drv_hw.h)
     >Note: requires hardware interface implementation (ex: `sensor_drv_hw.c`).
 
-Sensor hardware interface implementation for using VSI (Virtual Streaming Interface) on Arm Virtual Hardware (AVH) is provided in directory [VSI](vsi).
+Sensor hardware interface implementation for using VSI (Virtual Streaming Interface) on Arm Virtual Hardware (AVH) is provided in directory [VSI](../VSI).
