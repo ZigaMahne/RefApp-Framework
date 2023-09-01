@@ -66,15 +66,51 @@ static inline void sensorUnLock     (void) {}
 
 static int32_t Accelerometer_Enable (void) {
   int32_t ret = SENSOR_ERROR;
-  uint8_t tmp = 0U;
+  uint8_t tmp = 0U, tmp1;
 
   sensorLockCreate();
   sensorLock();
-  // Setup the Active mode
-  FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, ACTIVE);
-  // Read Control register to ensure we are in Active mode
-  FXOS_ReadReg(&g_fxosHandle, CTRL_REG1, &tmp, 1U);
-  if ((tmp & ACTIVE_MASK) == ACTIVE) {
+  // Read M_CTRL_REG1 register
+  FXOS_ReadReg(&g_fxosHandle, M_CTRL_REG1, &tmp, 1U);
+  // Accelerometer/Magnetometer sensor is active (Hybrid mode)
+  if ((tmp & M_HMS_MASK) == HYBRID_ACTIVE) {
+    ret = SENSOR_OK;
+  }
+  // Magnetometer sensor is active
+  else if ((tmp & M_HMS_MASK) == MAG_ACTIVE) {
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
+    do {
+      tmp1 = 0xffU;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_STANDBY);
+    // Setup the Hybrid mode (Accelerometer and Magnetometer)
+    FXOS_WriteReg(&g_fxosHandle,   CTRL_REG1,    HYB_DATA_RATE_200HZ | ACTIVE_MASK);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, M_RST_MASK | M_OSR_MASK | M_HMS_MASK);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG2,                   M_HYB_AUTOINC_MASK);
+    do {
+      tmp1 = 0x0U;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_WAKE);
+    ret = SENSOR_OK;
+  }
+  // Magnetometer sensor is not active
+  else if ((tmp & M_HMS_MASK) == ACCEL_ACTIVE) {
+    // Setup only Accelerometer sensor as active
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
+    do {
+      tmp1 = 0xffU;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_STANDBY);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1,                  ACCEL_ACTIVE);
+    FXOS_WriteReg(&g_fxosHandle,   CTRL_REG1, DATA_RATE_200HZ | ACTIVE_MASK);
+    do {
+      tmp1 = 0x0U;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_WAKE);
     ret = SENSOR_OK;
   }
   sensorUnLock();
@@ -84,14 +120,33 @@ static int32_t Accelerometer_Enable (void) {
 
 static int32_t Accelerometer_Disable (void) {
   int32_t ret = SENSOR_ERROR;
-  uint8_t tmp = 0U;
+  uint8_t tmp = 0U, tmp1;
 
   sensorLock();
-  // Setup the Standby mode
-  FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
-  // Read Control register to ensure we are in Standby mode
-  FXOS_ReadReg(&g_fxosHandle, CTRL_REG1, &tmp, 1U);
-  if ((tmp & ACTIVE_MASK) == STANDBY) {
+  // Read M_CTRL_REG1 register
+  FXOS_ReadReg(&g_fxosHandle, M_CTRL_REG1, &tmp, 1U);
+  // if Accelerometer/Magnetometer sensor is active (Hybrid mode)
+  if ((tmp & M_HMS_MASK) == HYBRID_ACTIVE) {
+    // Magnetometer sensor stay active
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
+    do {
+      tmp1 = 0xffU;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_STANDBY);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, M_RST_MASK | M_OSR_MASK | MAG_ACTIVE);
+    FXOS_WriteReg(&g_fxosHandle,   CTRL_REG1,        DATA_RATE_200HZ | ACTIVE_MASK);
+    do {
+      tmp1 = 0x0U;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_WAKE);
+    ret = SENSOR_OK;
+  }
+  // if only Accelerometer sensor is active
+  else if ((tmp & M_HMS_MASK) == ACCEL_ACTIVE) {
+    // Setup the Standby mode
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
     ret = SENSOR_OK;
   }
   sensorUnLock();
@@ -106,19 +161,23 @@ static uint32_t Accelerometer_GetOverflow (void) {
 
 static uint32_t Accelerometer_ReadSamples (uint32_t num_samples, void *buf) {
   uint32_t num;
-  int32_t  ret;
+  int32_t ret = 0xff;
   uint8_t tmp = 0U;
   uint8_t tmp_buff[6];
 
   (void)num_samples;
+  memset(&tmp_buff, 0, sizeof(tmp_buff));
 
   sensorLock();
-  ret = FXOS_ReadReg(&g_fxosHandle, F_STATUS_REG, &tmp, 1U);
+
+  ret = FXOS_ReadReg(&g_fxosHandle, STATUS_00_REG, &tmp, 1U);
   if ((ret == 0) && ((tmp & ZYXDR_MASK) != 0U)) {
     if ((FXOS_ReadReg(&g_fxosHandle, OUT_X_MSB_REG, tmp_buff, 6U)) == kStatus_Success) {
       memcpy(buf, &tmp_buff, sizeof(tmp_buff));
       num = 1U;
     }
+  } else {
+    num = 0;
   }
   sensorUnLock();
 
@@ -139,22 +198,48 @@ sensorDrvHW_t sensorDrvHW_3 = {
 
 static int32_t Magnetometer_Enable (void) {
   int32_t ret = SENSOR_ERROR;
-  uint8_t tmp = 0U;
+  uint8_t tmp = 0U , tmp1;
 
   sensorLockCreate();
   sensorLock();
-
-  // Read CTRL_REG1 register to ensure if Acelerometer sensor is active
-  FXOS_ReadReg(&g_fxosHandle, CTRL_REG1, &tmp, 1U);
-  if ((tmp & M_HMS0_MASK) != 0U) {
-    // Setup the Hybrid mode (Acelerometer and Magnetometer)
-    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, (M_RST_MASK | M_OSR_MASK | M_HMS_MASK));
-    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG2, (M_HYB_AUTOINC_MASK));
+  // Read M_CTRL_REG1 register
+  FXOS_ReadReg(&g_fxosHandle, M_CTRL_REG1, &tmp, 1U);
+  // Accelerometer/Magnetometer sensor is active (Hybrid mode)
+  if ((tmp & M_HMS_MASK) == HYBRID_ACTIVE) {
     ret = SENSOR_OK;
   }
-  else   if ((tmp & M_HMS0_MASK) == 0U) {
+  // Accelerometer sensor is active
+  else if ((tmp & M_HMS_MASK) == ACCEL_ACTIVE) {
+    // Setup the Hybrid mode (Accelerometer and Magnetometer)
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
+    do {
+      tmp1 = 0xff;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_STANDBY);
+    FXOS_WriteReg(&g_fxosHandle,   CTRL_REG1,    HYB_DATA_RATE_200HZ | ACTIVE_MASK);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, M_RST_MASK | M_OSR_MASK | M_HMS_MASK);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG2,                   M_HYB_AUTOINC_MASK);
+    do {
+      tmp1 = 0x0U;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_WAKE);
+    ret = SENSOR_OK;
+  }
+  // Read CTRL_REG1 register
+  FXOS_ReadReg(&g_fxosHandle, CTRL_REG1, &tmp, 1U);
+  // Accelerometer sensor is not active (standby)
+  if ((tmp & ACTIVE_MASK) == STANDBY) {
     // Setup only Magnetometer sensor as active
-    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, (M_RST_MASK | M_OSR_MASK | M_HMS1_MASK));
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, M_RST_MASK | M_OSR_MASK | MAG_ACTIVE);
+    FXOS_WriteReg(&g_fxosHandle,   CTRL_REG1,        DATA_RATE_200HZ | ACTIVE_MASK);
+
+    do {
+      tmp1 = 0x0U;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_WAKE);
     ret = SENSOR_OK;
   }
   sensorUnLock();
@@ -164,20 +249,31 @@ static int32_t Magnetometer_Enable (void) {
 
 static int32_t Magnetometer_Disable (void) {
   int32_t ret = SENSOR_ERROR;
-  uint8_t tmp = 0U;
+  uint8_t tmp = 0U, tmp1;
 
   sensorLock();
-  // Read CTRL_REG1 register to ensure if Acelerometer/Magnetometer sensor is active
-  FXOS_ReadReg(&g_fxosHandle, CTRL_REG1, &tmp, 1U);
-  if ((tmp & M_HMS_MASK) != 0U) {
-    // Acelerometer sensor stay active
-    FXOS_ReadReg(&g_fxosHandle, M_CTRL_REG1, &tmp, 1U);
-    tmp &= ~(1UL << 0U);
-    tmp &= ~(1UL << 1U);
-    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1, tmp);
+  // Read M_CTRL_REG1 register
+  FXOS_ReadReg(&g_fxosHandle, M_CTRL_REG1, &tmp, 1U);
+  //  Accelerometer/Magnetometer sensor is active (Hybrid mode)
+  if ((tmp & M_HMS_MASK) == HYBRID_ACTIVE) {
+    // Accelerometer sensor stay active
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
+    do {
+      tmp1 = 0xff;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_STANDBY);
+    FXOS_WriteReg(&g_fxosHandle, M_CTRL_REG1,                ACCEL_ACTIVE);
+    FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, DATA_RATE_200HZ | ACTIVE_MASK);
+    do {
+      tmp1 = 0x0U;
+      FXOS_ReadReg(&g_fxosHandle, SYSMOD_REG, &tmp1, 1U);
+      tmp1 &= SYSMOD_MASK;
+    } while (tmp1 != SYSMOD_WAKE);
     ret = SENSOR_OK;
   }
-  else if ((tmp & M_HMS1_MASK) != 0U) {
+  // Only Magnetometer sensor is active
+  else if ((tmp & M_HMS_MASK) == MAG_ACTIVE) {
     // Setup the Standby mode
     FXOS_WriteReg(&g_fxosHandle, CTRL_REG1, STANDBY);
     ret = SENSOR_OK;
@@ -194,11 +290,12 @@ static uint32_t Magnetometer_GetOverflow (void) {
 
 static uint32_t Magnetometer_ReadSamples (uint32_t num_samples, void *buf) {
   uint32_t num;
-  int32_t  ret;
+  int32_t  ret = 0xff;
   uint8_t tmp = 0U;
   uint8_t tmp_buff[6];
 
   (void)num_samples;
+  memset(&tmp_buff, 0, sizeof(tmp_buff));
 
   sensorLock();
   ret = FXOS_ReadReg(&g_fxosHandle, M_DR_STATUS_REG, &tmp, 1U);
@@ -207,7 +304,9 @@ static uint32_t Magnetometer_ReadSamples (uint32_t num_samples, void *buf) {
       memcpy(buf, &tmp_buff, sizeof(tmp_buff));
       num = 1U;
     }
-  }
+  } else {
+      num = 0;
+    }
   sensorUnLock();
 
   return num;
