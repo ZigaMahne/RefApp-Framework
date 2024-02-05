@@ -34,19 +34,18 @@ layer:
         - Heap: 65536
 
   packs:
-    - pack: NXP::MIMXRT1052_DFP@15.1.0
-    - pack: NXP::EVKB-IMXRT1050_BSP@15.1.0
-    - pack: Keil::IMXRT1050-EVKB_BSP@1.1.1
-    - pack: Keil::iMXRT105x_MWP@1.5.1
-    - pack: ARM::CMSIS@5.9.0
+    - pack: NXP::MIMXRT1052_DFP@17.0.0
+    - pack: NXP::EVKB-IMXRT1050_BSP@17.0.0
+    - pack: Keil::IMXRT1050-EVKB_BSP@1.3.0
+    - pack: Keil::iMXRT105x_MWP@1.6.0
+    - pack: ARM::CMSIS@>=6.0.0
     - pack: ARM::CMSIS-Driver@2.7.2
-    - pack: ARM::CMSIS-View@1.0.0
-    - pack: ARM::CMSIS-Compiler@1.0.0
+    - pack: ARM::CMSIS-View@1.1.0
+    - pack: ARM::CMSIS-Compiler@2.0.0
 
   define:
     - CMSIS_board_header: "\"IMXRT1050_EVKB.h\""
     - CODEC_WM8960_ENABLE
-    - FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL: 1
     - SKIP_SYSCLK_INIT
     - XIP_BOOT_HEADER_DCD_ENABLE: 1
     - XIP_BOOT_HEADER_ENABLE: 1
@@ -69,6 +68,9 @@ layer:
     - component: NXP::Device:SDK Drivers:codec
     - component: NXP::Device:SDK Drivers:codec_i2c
     - component: NXP::Device:SDK Drivers:common
+      misc:
+        - C:
+            - -include cmsis_core5.h
     - component: NXP::Device:SDK Drivers:dmamux
     - component: NXP::Device:SDK Drivers:edma
     - component: NXP::Device:SDK Drivers:enet
@@ -93,13 +95,10 @@ layer:
 
     - component: NXP::Device:SDK Utilities:assert
     - component: NXP::Device:SDK Utilities:debug_console
-      define:
-        - SDK_DEBUGCONSOLE: 1
-        - __MCUXPRESSO
     - component: NXP::Device:SDK Utilities:serial_manager
     - component: NXP::Device:SDK Utilities:serial_manager_uart
 
-    - component: NXP::Board Support:SDK Drivers:evkbimxrt1050
+    - component: NXP::Board Support:SDK Drivers:evkbimxrt1050 xip
     - component: NXP::Board Support:SDK Project Template:project_template&evkbimxrt1050
 
     - component: ARM::CMSIS:CORE
@@ -114,10 +113,13 @@ layer:
     - component: Keil::CMSIS Driver:VIO:Board&IMXRT1050-EVKB
 
     - component: ARM::CMSIS-View:Event Recorder&DAP
-    - component: ARM::CMSIS-Compiler:I/O:STDERR&User
-    - component: ARM::CMSIS-Compiler:I/O:STDOUT&User
-    - component: ARM::CMSIS-Compiler:I/O:STDIN&User
+    - component: ARM::CMSIS-Compiler:CORE
+    - component: ARM::CMSIS-Compiler:STDERR:Custom
+    - component: ARM::CMSIS-Compiler:STDOUT:Custom
+    - component: ARM::CMSIS-Compiler:STDIN:Custom
 
+  linker:
+    - script: ./RTE/Device/MIMXRT1052DVL6B/MIMXRT1052xxxxx_flexspi_nor_sdram.scf
   groups:
     - group: GPIO Interface
       files:
@@ -126,11 +128,11 @@ layer:
         - file: ../../../../interface/gpio/driver/iMXRT1050/GPIO_iMXRT1050.c
     - group: Board
       files:
+        - file: ./RTE/CMSIS/cmsis_core5.h
         - file: ./IMXRT1050_EVKB.h
         - file: ./main.h
         - file: ./main.c
         - file: ./retarget_stdio.c
-        - file: ./RTE/Device/MIMXRT1052DVL6B/MIMXRT1052xxxxx_flexspi_nor_sdram.scf
     - group: Driver
       files:
         - file: ../../../../interface/audio/include/audio_drv.h
