@@ -1,5 +1,5 @@
 ;/*
-; * Copyright (c) 2021-2022 Arm Limited. All rights reserved.
+; * Copyright (c) 2009-2023 Arm Limited
 ; *
 ; * Licensed under the Apache License, Version 2.0 (the "License");
 ; * you may not use this file except in compliance with the License.
@@ -12,9 +12,6 @@
 ; * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; * See the License for the specific language governing permissions and
 ; * limitations under the License.
-; *
-; *
-; * This file is derivative of CMSIS V5.00 gcc_arm.ld
 ; */
 
 /* Linker script to configure memory regions. */
@@ -34,6 +31,39 @@ __stack_size__ = STACK_SIZE;
 /* Library configurations */
 GROUP(libgcc.a libc.a libm.a libnosys.a)
 
+/* Linker script to place sections and symbol values. Should be used together
+ * with other linker script that defines memory regions FLASH and RAM.
+ * It references following symbols, which must be defined in code:
+ *   Reset_Handler : Entry of reset handler
+ *
+ * It defines following symbols, which code can use without definition:
+ *   __exidx_start
+ *   __exidx_end
+ *   __copy_table_start__
+ *   __copy_table_end__
+ *   __zero_table_start__
+ *   __zero_table_end__
+ *   __etext
+ *   __data_start__
+ *   __preinit_array_start
+ *   __preinit_array_end
+ *   __init_array_start
+ *   __init_array_end
+ *   __fini_array_start
+ *   __fini_array_end
+ *   __data_end__
+ *   __bss_start__
+ *   __bss_end__
+ *   __end__
+ *   end
+ *   __HeapBase
+ *   __HeapLimit
+ *   __StackLimit
+ *   __StackTop
+ *   __stack
+ *   __Vectors_End
+ *   __Vectors_Size
+ */
 ENTRY(Reset_Handler)
 
 SECTIONS
@@ -70,7 +100,28 @@ SECTIONS
         KEEP(*(.eh_frame*))
     } > FLASH
 
-    .ARM.extab :
+    /*
+     * Place the CMSE Veneers (containing the SG instruction) after the code, in a
+     * separate 32 bytes aligned region so that the SAU can programmed to just set
+     * this region as Non-Secure Callable. The maximum size of this executable
+     * region makes it only used the space left over by the ER_CODE region
+     * so that you can rely on code+veneer size combined will not exceed the
+     * S_CODE_SIZE value. We also substract from the available space the
+     * area used to align this section on 32 bytes boundary (for SAU conf).
+     */
+    .gnu.sgstubs : ALIGN(32)
+    {
+        *(.gnu.sgstubs*)
+    } > FLASH
+    . = ALIGN(32);
+    Image$$ER_CODE_CMSE_VENEER$$Base = ADDR(.gnu.sgstubs);
+    Image$$ER_CODE_CMSE_VENEER$$Limit = .;
+    Image$$ER_CODE_CMSE_VENEER$$Length = Image$$ER_CODE_CMSE_VENEER$$Limit - Image$$ER_CODE_CMSE_VENEER$$Base;
+
+    /* Make sure veneers fit into code memory */
+    ASSERT(((S_CODE_START + S_CODE_SIZE) > Image$$ER_CODE_CMSE_VENEER$$Limit), "Veneer region does not fit into code memory")
+
+    .ARM.extab : ALIGN(32)
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
     } > FLASH
@@ -84,10 +135,9 @@ SECTIONS
 
     /* To copy multiple ROM to RAM sections,
      * define etext2/data2_start/data2_end and
-     * define __STARTUP_COPY_MULTIPLE in startup_cmsdk_mps3_an524_ns.S */
-    .copy.table :
+     * define __STARTUP_COPY_MULTIPLE in startup_cmsdk_mps2_sse_200.S */
+    .copy.table : ALIGN(4)
     {
-        . = ALIGN(4);
         __copy_table_start__ = .;
         LONG (__etext)
         LONG (__data_start__)
@@ -100,10 +150,9 @@ SECTIONS
 
     /* To clear multiple BSS sections,
      * uncomment .zero.table section and,
-     * define __STARTUP_CLEAR_BSS_MULTIPLE in startup_cmsdk_mps3_an524_ns.S */
-    .zero.table :
+     * define __STARTUP_CLEAR_BSS_MULTIPLE in startup_ARMCMx.S */
+    .zero.table : ALIGN(4)
     {
-        . = ALIGN(4);
         __zero_table_start__ = .;
         LONG (__bss_start__)
         LONG ((__bss_end__ - __bss_start__) / 4)
@@ -112,18 +161,9 @@ SECTIONS
         __zero_table_end__ = .;
     } > FLASH
 
-    __etext = .;
+    __etext = ALIGN(4);
 
-#if defined(BL2_LINKER)
-    .tfm_bl2_shared_data : ALIGN(32)
-    {
-        . += BOOT_TFM_SHARED_DATA_SIZE;
-    } > RAM
-    Image$$SHARED_DATA$$RW$$Base = ADDR(.tfm_bl2_shared_data);
-    Image$$SHARED_DATA$$RW$$Limit = ADDR(.tfm_bl2_shared_data) + SIZEOF(.tfm_bl2_shared_data);
-#endif
-
-    .data : AT (__etext)
+    .data : ALIGN(4)
     {
         __data_start__ = .;
         *(vtable)
@@ -155,12 +195,10 @@ SECTIONS
         /* All data end */
         __data_end__ = .;
 
-    } > RAM
-    Image$$ER_DATA$$Base = ADDR(.data);
+    } > RAM AT> FLASH
 
-    .bss :
+    .bss : ALIGN(4)
     {
-        . = ALIGN(4);
         __bss_start__ = .;
         *(.bss*)
         *(COMMON)
@@ -170,16 +208,22 @@ SECTIONS
 
     bss_size = __bss_end__ - __bss_start__;
 
-    .msp_stack : ALIGN(32)
+    .stack : ALIGN(8)
     {
-        . += __stack_size__;
+        __StackLimit = .;
+        KEEP(*(.stack*))
+        . += __stack_size__ - 0x8;
+        __StackTop = .;
     } > RAM
-    __StackLimit = ADDR(.msp_stack);
-    __StackTop = ADDR(.msp_stack) + SIZEOF(.msp_stack);
+
+    .msp_stack_seal_res :
+    {
+        . += 0x8;
+    } > RAM
+    __StackSeal = ADDR(.msp_stack_seal_res);
 
     .heap : ALIGN(8)
     {
-        . = ALIGN(8);
         __end__ = .;
         PROVIDE(end = .);
         __HeapBase = .;
@@ -187,7 +231,12 @@ SECTIONS
         __HeapLimit = .;
         __heap_limit = .; /* Add for _sbrk */
     } > RAM
-    Image$$ARM_LIB_HEAP$$ZI$$Limit = ADDR(.heap) + SIZEOF(.heap);
 
+    /* Set stack top to end of the used RAM section, and stack limit move down by
+     * size of stack_dummy section */
     PROVIDE(__stack = __StackTop);
+
+
+    /* Check if data + heap + stack exceeds RAM limit */
+    ASSERT(__StackTop <= (S_DATA_START + S_DATA_SIZE), "Secure RAM region overflowed")
 }
