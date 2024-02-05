@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2022 Arm Limited. All rights reserved.
+ * Copyright (c) 2009-2023 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,8 +17,8 @@
  */
 
 /*
- * This file is derivative of CMSIS system_ARMCM85.c
- * Git SHA: 61ad1303bc50450130cfb540caa384875a260b91
+ * This file is derivative of CMSIS V5.9.0 system_ARMCM85.c
+ * Git SHA: 2b7495b8535bdcb306dac29b9ded4cfb679d7e5c
  */
 
 #include "SSE310MPS3.h"
@@ -26,7 +26,7 @@
 /*----------------------------------------------------------------------------
   Define clocks
  *----------------------------------------------------------------------------*/
- #define  XTAL             (32000000UL)
+ #define  XTAL             (25000000UL)
  #define  SYSTEM_CLOCK     (XTAL)
  #define  PERIPHERAL_CLOCK (25000000UL)
 
@@ -88,4 +88,20 @@ void SystemInit (void)
 
     __DSB();
     __ISB();
+
+    /* Disable cache, because of BL2->Secure change.
+       If cache is enabled, then code decompression can fail or cause uncertain
+       behaviour after switching to main.
+       If cache  needed to be Enabled before decompression, make sure to Clean
+       and Invalidate it at the begining of main(..)!
+
+       If so, use:
+       SCB_InvalidateICache();      // I cache cannot be cleaned
+       SCB_CleanInvalidateDCache();
+    */
+    SCB_DisableICache();
+    SCB_DisableDCache();
+
+    SystemCoreClock = SYSTEM_CLOCK;
+    PeripheralClock = PERIPHERAL_CLOCK;
 }
