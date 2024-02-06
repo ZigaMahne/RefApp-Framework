@@ -290,6 +290,7 @@ int main(void)
   MX_OCTOSPI2_Init();
   MX_SPI2_Init();
   MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
   MX_UCPD1_Init();
   MX_USB_OTG_FS_PCD_Init();
   MX_RNG_Init();
@@ -1110,7 +1111,7 @@ static void MX_USART1_UART_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_UARTEx_EnableFifoMode(&huart1) != HAL_OK)
+  if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
   {
     Error_Handler();
   }
