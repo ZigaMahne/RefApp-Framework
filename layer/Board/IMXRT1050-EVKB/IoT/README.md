@@ -1,7 +1,7 @@
 Board: NXP IMXRT1050-EVKB
 -------------------------
 
-The tables below list the device configuration for this board. The board layer for the NXP IMXRT1050-EVKB is using the software component `::Board Support: SDK Project Template: project_template (Variant: evkbimxrt1050)` from `NXP.EVKB-IMXRT1050_BSP.15.0.0` pack.
+The tables below list the device configuration for this board. The board layer for the NXP IMXRT1050-EVKB is using the software component `::Board Support: SDK Project Template: project_template (Variant: evkbimxrt1050)` from `NXP.EVKB-IMXRT1050_BSP.17.0.0` pack.
 
 The heap/stack setup and the CMSIS-Driver assignment is in configuration files of related software components.
 
@@ -94,8 +94,6 @@ The example project can be re-configured to work on custom hardware. Refer to ["
 |:------------------|:-----------------------
 | vioBUTTON0        | User Button SW8 (WAKEUP)
 | vioLED0           | User LED (GPIO_AD_B0_09)
-| vioMotionAccelero | 3-Axis Accelerometer (FXOS8700CQ)
-| vioMotionMagneto  | 3-Axis Magnetometer (FXOS8700CQ)
 
 ### Arduino UNO mapping
 
