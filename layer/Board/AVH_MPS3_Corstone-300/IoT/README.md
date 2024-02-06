@@ -32,8 +32,8 @@ Running the VHT via command line (from project root directory and VHT executable
 |:------------------------|:----------------------------------------
 | Device                  | SSE-300-MPS3
 | Clock                   | 32 MHz
-| Heap                    | 64 kB (configured in region_limit.h file)
-| Stack (MSP)             | 1 kB (configured in region_limit.h file)
+| Heap                    | 64 kB (configured in regions_V2M_MPS3_SSE_300_FVP.h file)
+| Stack (MSP)             | 1 kB (configured in regions_V2M_MPS3_SSE_300_FVP.h file)
 
 **STDIO** is routed to USART0
 
