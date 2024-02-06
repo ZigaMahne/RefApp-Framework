@@ -1,7 +1,5 @@
-#! armclang --target=arm-arm-none-eabi -march=armv8.1-m.main -E -xc
-
 ;/*
-; * Copyright (c) 2018-2021 Arm Limited
+; * Copyright (c) 2018-2023 Arm Limited
 ; *
 ; * Licensed under the Apache License, Version 2.0 (the "License");
 ; * you may not use this file except in compliance with the License.
@@ -44,7 +42,10 @@ LR_CODE S_CODE_START {
     }
     #endif
 
-    ARM_LIB_STACK +0 ALIGN 32 EMPTY STACK_SIZE {   ; Reserve empty region for stack
+    ARM_LIB_STACK +0 ALIGN 32 EMPTY STACK_SIZE - 0x8 {   ; Reserve empty region for stack
+    }
+
+    STACKSEAL +0 EMPTY 0x8 {
     }
 
     /* This empty, zero long execution region is here to mark the limit address
