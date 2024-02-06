@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2022 Arm Limited
+ * Copyright (c) 2018-2024 Arm Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,23 +27,23 @@
  ****************************************************************/
 
 /* Secure Code */
-#define S_ROM_ALIAS               (0x11000000) /* SRAM_BASE_S */
-#define TOTAL_S_ROM_SIZE          (0x00100000) /* 1 MB */
+#define S_ROM_ALIAS      (0x11000000) /* SRAM_BASE_S */
+#define TOTAL_S_ROM_SIZE (0x00100000) /* 1 MB */
 
 /* Secure Data */
-#define S_RAM_ALIAS               (0x31000000) /* ISRAM0_BASE_S */
-#define TOTAL_S_RAM_SIZE          (0x00200000) /* 2 MB */
+#define S_RAM_ALIAS      (0x31000000) /* ISRAM0_BASE_S */
+#define TOTAL_S_RAM_SIZE (0x00200000) /* 2 MB */
 
 /* Non-Secure Code */
-#define NS_ROM_ALIAS              (0x01000000 + 0x00100000) /* SRAM_BASE_NS */
-#define TOTAL_NS_ROM_SIZE         (0x00100000) /* 1 MB */
+#define NS_ROM_ALIAS      (0x01000000 + 0x00100000) /* SRAM_BASE_NS */
+#define TOTAL_NS_ROM_SIZE (0x00100000)              /* 1 MB */
 
 /* Non-Secure Data */
-#define NS_RAM_ALIAS              (0x21000000 + 0x00200000) /* ISRAM0_BASE_NS */
-#define TOTAL_NS_RAM_SIZE         (0x00200000) /* 2 MB */
+#define NS_RAM_ALIAS      (0x21000000 + 0x00200000) /* ISRAM0_BASE_NS */
+#define TOTAL_NS_RAM_SIZE (0x00200000)              /* 2 MB */
 
 /* Heap and Stack sizes for secure and nonsecure applications */
-#define HEAP_SIZE                 (0x00010000) /* 64 KiB */
-#define STACK_SIZE                (0x00000400) /* 1 KiB */
+#define HEAP_SIZE  (0x00010000) /* 64 KiB */
+#define STACK_SIZE (0x00000400) /* 1 KiB */
 
 #endif /* __REGION_LIMITS_H__ */
