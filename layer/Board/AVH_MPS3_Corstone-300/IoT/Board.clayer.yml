@@ -26,7 +26,6 @@ layer:
     - pack: ARM::CMSIS@>=6.0.0
     - pack: ARM::CMSIS-Driver@2.8.0
     - pack: ARM::CMSIS-View@1.1.0
-    - pack: ARM::CMSIS-Compiler@2.0.0
 
   define:
     - CMSIS_board_header: "\"AVH_MPS3_Corstone_300.h\""
@@ -69,4 +68,3 @@ layer:
         - file: ../../../../interface/VSI/include/arm_vsi.h
         - file: ../../../../interface/audio/include/audio_drv.h
         - file: ../../../../interface/VSI/audio/driver/audio_drv.c
-        - file: ./RTE/Device/SSE_300_MPS3/regions_V2M_MPS3_SSE_300_FVP.h
