@@ -42,8 +42,8 @@ layer:
     - pack: Keil::STM32U5xx_DFP@2.1.0
     - pack: Keil::B-U585I-IOT02A_BSP@1.1.0
     - pack: ARM::CMSIS@>=6.0.0
-    - pack: ARM::CMSIS-View@1.1.0
-    - pack: ARM::CMSIS-Compiler@2.0.0
+    - pack: ARM::CMSIS-View@>=1.0.0
+    - pack: ARM::CMSIS-Compiler@>=2.0.0
 
   define:
     - CMSIS_board_header: "\"B_U585I_IOT02A_DK.h\""
