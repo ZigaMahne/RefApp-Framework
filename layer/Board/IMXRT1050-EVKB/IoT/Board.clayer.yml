@@ -41,9 +41,9 @@ layer:
     - pack: Keil::IMXRT1050-EVKB_BSP@1.2.0
     - pack: Keil::iMXRT105x_MWP@1.6.0
     - pack: ARM::CMSIS@>=6.0.0
-    - pack: ARM::CMSIS-Driver@2.8.0
-    - pack: ARM::CMSIS-View@1.1.0
-    - pack: ARM::CMSIS-Compiler@2.0.0
+    - pack: ARM::CMSIS-Driver@>=2.8.0
+    - pack: ARM::CMSIS-View@>=1.1.0
+    - pack: ARM::CMSIS-Compiler@>=2.0.0
 
   define:
     # - CMSIS_VOUT
@@ -97,6 +97,8 @@ layer:
     - component: NXP::Device:SDK Drivers:xip_device
 
     - component: NXP::Device:SDK Project Template:RTE_Device
+
+    - component: NXP::Device:SDK Utilities:MIMXRT1052_linker
 
     - component: NXP::Device:SDK Utilities:assert
     - component: NXP::Device:SDK Utilities:debug_console
