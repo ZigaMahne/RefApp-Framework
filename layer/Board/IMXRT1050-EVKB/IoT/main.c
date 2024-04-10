@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------
- * Copyright (c) 2021-2022 Arm Limited (or its affiliates). 
+ * Copyright (c) 2021-2022 Arm Limited (or its affiliates).
  * All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -50,10 +50,23 @@ uint32_t LPUART3_GetFreq   (void) { return BOARD_BOOTCLOCKRUN_UART_CLK_ROOT; }
 void     LPUART3_InitPins  (void) { /* Done in BOARD_InitARDUINO_UART function */ }
 void     LPUART3_DeinitPins(void) { /* Not implemented */ }
 
-//FXOS8700 sensor initialization variables
-  const uint8_t g_accel_address = 0x1FU;
-  fxos_handle_t g_fxosHandle = {0};
-  fxos_config_t config = {0};
+// FXOS 6-axis sensor handle
+fxos_handle_t g_fxosHandle = {0};
+
+// Sensor initialize
+static void BOARD_InitSensor (void) {
+  static fxos_config_t config = {0};
+
+  BOARD_InitI2C();
+  BOARD_Accel_I2C_Init();
+
+  config.I2C_SendFunc    = BOARD_Accel_I2C_Send;
+  config.I2C_ReceiveFunc = BOARD_Accel_I2C_Receive;
+  config.slaveAddress    = 0x1FU;
+  if (FXOS_Init(&g_fxosHandle, &config) != kStatus_Success) {
+    while (1);
+  }
+}
 
 #ifdef CMSIS_shield_header
 __WEAK int32_t shield_setup (void) {
@@ -79,6 +92,8 @@ int main (void) {
   BOARD_InitBootClocks();
   BOARD_InitDebugConsole();
 
+  BOARD_InitSensor();
+
   NVIC_SetPriority(ENET_IRQn,    8U);
   NVIC_SetPriority(USDHC1_IRQn,  8U);
   NVIC_SetPriority(LPUART3_IRQn, 8U);
@@ -96,17 +111,6 @@ int main (void) {
   GPIO_PinWrite(GPIO1,  9U, 0U);
   SDK_DelayAtLeastUs(500U, CLOCK_GetFreq(kCLOCK_CpuClk));
   GPIO_PinWrite(GPIO1,  9U, 1U);
-
-// Init I2C peripheral for FXOS8700 sensor
-  BOARD_InitI2C();
-  BOARD_Accel_I2C_Init();
-  config.I2C_SendFunc    = BOARD_Accel_I2C_Send;
-  config.I2C_ReceiveFunc = BOARD_Accel_I2C_Receive;
-  config.slaveAddress    = g_accel_address;
-  if (FXOS_Init(&g_fxosHandle, &config) != kStatus_Success)
-  {
-    while (1);
-  }
 
 #ifdef RTE_VIO_BOARD
   vioInit();                            // Initialize Virtual I/O
