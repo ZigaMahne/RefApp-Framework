@@ -42,7 +42,6 @@ layer:
     - pack: Keil::STM32U5xx_DFP@2.1.0
     - pack: Keil::B-U585I-IOT02A_BSP@1.1.0
     - pack: ARM::CMSIS@>=6.0.0
-    - pack: ARM::CMSIS-View@>=1.0.0
     - pack: ARM::CMSIS-Compiler@>=2.0.0
 
   define:
@@ -114,7 +113,6 @@ layer:
     - component: Keil::CMSIS Driver:VIO
     - component: Keil::CMSIS Driver:WiFi:EMW3080
 
-    - component: ARM::CMSIS-View:Event Recorder&DAP
     - component: ARM::CMSIS-Compiler:CORE
     - component: ARM::CMSIS-Compiler:STDERR:Custom
     - component: ARM::CMSIS-Compiler:STDOUT:Custom

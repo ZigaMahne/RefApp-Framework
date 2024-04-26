@@ -22,16 +22,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
-#include "cmsis_os2.h"
 #include "RTE_Components.h"
 #ifdef    RTE_VIO_BOARD
 #include "cmsis_vio.h"
 #endif
 #ifdef    CMSIS_shield_header
 #include  CMSIS_shield_header
-#endif
-#if defined(RTE_Compiler_EventRecorder)
-#include "EventRecorder.h"
 #endif
 
 #include "GPIO_STM32U5xx.h"
@@ -126,36 +122,6 @@ extern int32_t BSP_I2C2_WriteReg(uint16_t DevAddr, uint16_t Reg, uint8_t *pData,
 extern int32_t BSP_I2C2_ReadReg(uint16_t DevAddr, uint16_t Reg, uint8_t *pData, uint16_t Length);
 extern int32_t BSP_GetTick(void);
 
-/**
-  * Override default HAL_GetTick function
-  */
-uint32_t HAL_GetTick (void) {
-  static uint32_t ticks = 0U;
-         uint32_t i;
-
-  if (osKernelGetState () == osKernelRunning) {
-    return ((uint32_t)osKernelGetTickCount());
-  }
-
-  /* If Kernel is not running wait approximately 1 ms then increment 
-     and return auxiliary tick counter value */
-  for (i = (SystemCoreClock >> 14U); i > 0U; i--) {
-    __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-    __NOP(); __NOP(); __NOP(); __NOP(); __NOP(); __NOP();
-  }
-  return ++ticks;
-}
-
-/**
-  * Override default HAL_InitTick function
-  */
-HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
-  
-  UNUSED(TickPriority);
-
-  return HAL_OK;
-}
-
 static void WiFi_EMW3080_Pin_FLOW_Event (ARM_GPIO_Pin_t pin, uint32_t event) {
   (void) pin;
   (void) event;
@@ -238,15 +204,6 @@ __WEAK int32_t shield_setup (void) {
   return 0;
 }
 #endif
-
-__WEAK void app_main (void *argument) {
-  (void) argument;
-}
-
-__WEAK int32_t app_initialize (void) {
-  osThreadNew(app_main, NULL, NULL);
-  return 0;
-}
 
 /* USER CODE END 0 */
 
@@ -334,12 +291,6 @@ int main(void)
   shield_setup();
 #endif
 
-#if defined(RTE_Compiler_EventRecorder) && \
-    (defined(__MICROLIB) || \
-    !(defined(RTE_CMSIS_RTOS2_RTX5) || defined(RTE_CMSIS_RTOS2_FreeRTOS)))
-  EventRecorderInitialize(EventRecordAll, 1U);
-#endif
-
 #ifdef RTE_Drivers_USBH0
   /* Enable VBUS driving on USB Type-C Port */
   BSP_USBPD_PWR_Init        (USBPD_PWR_TYPE_C_PORT_1);
@@ -348,9 +299,7 @@ int main(void)
   BSP_USBPD_PWR_VBUSInit    (USBPD_PWR_TYPE_C_PORT_1);
 #endif
 
-  osKernelInitialize();                         /* Initialize CMSIS-RTOS2 */
-  app_initialize();                             /* Initialize application */
-  osKernelStart();                              /* Start thread execution */
+  app_main();                                   /* Execute Application main */
 
   /* USER CODE END 2 */
 

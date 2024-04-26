@@ -19,15 +19,11 @@
 
 #include "RTE_Components.h"
 #include  CMSIS_device_header
-#include "cmsis_os2.h"
 #ifdef RTE_VIO_BOARD
 #include "cmsis_vio.h"
 #endif
 #ifdef    CMSIS_shield_header
 #include  CMSIS_shield_header
-#endif
-#ifdef RTE_Compiler_EventRecorder
-#include "EventRecorder.h"
 #endif
 
 #include "clock_config.h"
@@ -74,15 +70,6 @@ __WEAK int32_t shield_setup (void) {
 }
 #endif
 
-__WEAK void app_main (void *argument) {
-  (void) argument;
-}
-
-__WEAK int32_t app_initialize (void) {
-  osThreadNew(app_main, NULL, NULL);
-  return 0;
-}
-
 int main (void) {
   edma_config_t DmaConfig;
 
@@ -120,15 +107,5 @@ int main (void) {
   shield_setup();
 #endif
 
-#if defined(RTE_Compiler_EventRecorder) && \
-    (defined(__MICROLIB) || \
-    !(defined(RTE_CMSIS_RTOS2_RTX5) || defined(RTE_CMSIS_RTOS2_FreeRTOS)))
-  EventRecorderInitialize(EventRecordAll, 1U);
-#endif
-
-  osKernelInitialize();                 // Initialize CMSIS-RTOS2
-  app_initialize();                     // Initialize application
-  osKernelStart();                      // Start thread execution
-
-  for (;;) {}
+  return (app_main());
 }

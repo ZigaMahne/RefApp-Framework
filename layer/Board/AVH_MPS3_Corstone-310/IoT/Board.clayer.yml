@@ -10,8 +10,6 @@ layer:
 
   connections:
     - connect: AVH_MPS3_Cortsone-310 Board
-      consumes:
-        - CMSIS-RTOS2
       provides:
         - VSocket
         - CMSIS_ETH: 0
@@ -24,7 +22,6 @@ layer:
     - pack: ARM::V2M_MPS3_SSE_310_BSP@1.4.0
     - pack: ARM::CMSIS@>=6.0.0
     - pack: ARM::CMSIS-Driver@>=2.8.0
-    - pack: ARM::CMSIS-View@>=1.1.0
 
   define:
     - CMSIS_board_header: "\"AVH_MPS3_Corstone_310.h\""
@@ -47,8 +44,6 @@ layer:
 
     - component: ARM::CMSIS Driver:USART
     - component: Keil::CMSIS Driver:Ethernet:ETH_LAN91C111
-
-    - component: ARM::CMSIS-View:Event Recorder&Semihosting
 
   groups:
     - group: Board

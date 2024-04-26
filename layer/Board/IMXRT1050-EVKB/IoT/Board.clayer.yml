@@ -3,12 +3,10 @@ layer:
   # name: IMXRT1050-EVKB
   # variant: IoT-WiFi-Ethernet
   description: Board setup for IoT with WiFi and Ethernet interface
-  for-device: NXP::MIMXRT1052DVL6B
+  for-board: NXP::EVKB-IMXRT1050_MDK
 
   connections:
     - connect: IMXRT1050-EVKB Board
-      consumes:
-        - CMSIS-RTOS2
       provides:
         - CMSIS_ETH: 0
         - CMSIS_MCI: 0
@@ -42,11 +40,9 @@ layer:
     - pack: Keil::iMXRT105x_MWP@1.6.0
     - pack: ARM::CMSIS@>=6.0.0
     - pack: ARM::CMSIS-Driver@>=2.8.0
-    - pack: ARM::CMSIS-View@>=1.1.0
     - pack: ARM::CMSIS-Compiler@>=2.0.0
 
   define:
-    # - CMSIS_VOUT
     - CMSIS_board_header: "\"IMXRT1050_EVKB.h\""
     - CODEC_WM8960_ENABLE
     - FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL: 1
@@ -121,7 +117,6 @@ layer:
     - component: NXP::CMSIS Driver:USART:lpuart_cmsis
     - component: Keil::CMSIS Driver:VIO:Board&IMXRT1050-EVKB
 
-    - component: ARM::CMSIS-View:Event Recorder&DAP
     - component: ARM::CMSIS-Compiler:CORE
     - component: ARM::CMSIS-Compiler:STDERR:Custom
     - component: ARM::CMSIS-Compiler:STDOUT:Custom
